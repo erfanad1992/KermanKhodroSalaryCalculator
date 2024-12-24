@@ -2,14 +2,13 @@
 
 namespace Domain.PersonInfos;
 
-public interface IPersonInfoRepository
+public interface IPersonInfoWriteRepository
 {
-    Task<PersonInfo> GetAsync(long id);
     Task<PersonInfo> GetAsync(Expression<Func<PersonInfo, bool>> predicate);
     Task<IList<PersonInfo>> GetListAsync(Expression<Func<PersonInfo, bool>> predicate);
     Task InsertAsync(PersonInfo personInfo);
     Task<bool> IsExistsAsync(Expression<Func<PersonInfo, bool>> predicate);
-    void Remove(PersonInfo personInfo);
+    Task Remove(PersonInfo personInfo);
 
     Task SaveEntityChanges();
 
