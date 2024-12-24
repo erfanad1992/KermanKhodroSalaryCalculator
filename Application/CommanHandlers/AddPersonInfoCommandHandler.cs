@@ -19,7 +19,22 @@ namespace Application.CommanHandlers
         public async Task<long> Handle(AddPersonInfoCommand command, CancellationToken cancellationToken)
         {
 
-            var salaryAfterTax = OvertimeCalculator.CalculateSalary(command.BasicSalary, command.Allowance, command.Transportation, command.Tax);
+            IOvertimeCalculator overtimeCalculator = command.OvertimePolicy switch
+            {
+                "A" => new OvertimeCalculatorA(),
+                "B" => new OvertimeCalculatorB(),
+                "C" => new OvertimeCalculatorC(),
+                _ => throw new ArgumentException("Invalid Overtime Policy")
+            };
+
+            var salaryCalculator = new SalaryCalculator(overtimeCalculator);
+
+            var salaryAfterTax = salaryCalculator.CalculateSalary(
+                command.BasicSalary,
+                command.Allowance,
+                command.Transportation,
+                command.Tax
+            );
             var personInfo = new PersonInfo
                 (
                 _idGenerator.GetNewId(),

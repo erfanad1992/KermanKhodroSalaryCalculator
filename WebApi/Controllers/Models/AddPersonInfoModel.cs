@@ -12,6 +12,7 @@ namespace WebApi.Controllers.Models
         public decimal Allowance { get; set; }
         public decimal Transportation { get; set; }
         public decimal Tax { get; set; }
+        public string OvertimePolicy { get; set; }
 
         internal AddPersonInfoCommand ToCommand()
         {
@@ -23,7 +24,8 @@ namespace WebApi.Controllers.Models
                 BasicSalary = BasicSalary,
                 Allowance = Allowance,
                 Transportation = Transportation,
-                Tax = Tax
+                Tax = Tax,
+                OvertimePolicy = OvertimePolicy
             };
         }
 

@@ -1,27 +1,28 @@
 ﻿using Application.Commands;
+using Domain.PersonInfos;
 using MediatR;
 
 namespace Application.CommanHandlers
 {
-    //public class DeletePersonInfoCommandHandler : IRequestHandler<DeletePersonInfoCommand, long>
-    //{
-    //    private readonly IPersonInfoRepository _repository;
+    public class DeletePersonInfoCommandHandler : IRequestHandler<DeletePersonInfoCommand, long>
+    {
+        private readonly IPersonInfoWriteRepository _repository;
 
-    //    public DeletePersonInfoCommandHandler(IPersonInfoRepository repository)
-    //    {
-    //        _repository = repository;
-    //    }
-    //    public async Task<long> Handle(DeletePersonInfoCommand command, CancellationToken cancellationToken)
-    //    {
-    //        var personInfo = await _repository.GetAsync(command.Id);
-    //        if (personInfo is null)
-    //        {
-    //            throw new Exception("موجودیت مورد نظر یافت نشد");
+        public DeletePersonInfoCommandHandler(IPersonInfoWriteRepository repository)
+        {
+            _repository = repository;
+        }
+        public async Task<long> Handle(DeletePersonInfoCommand command, CancellationToken cancellationToken)
+        {
+            var personInfo = await _repository.GetAsync(x=>x.Id == command.Id);
+            if (personInfo is null)
+            {
+                throw new Exception("موجودیت مورد نظر یافت نشد");
 
-    //        }
-    //        _repository.Remove(personInfo);
+            }
+           await _repository.RemoveAsync(personInfo);
 
-    //        return personInfo.Id;
-    //    }
-    //}
+            return personInfo.Id;
+        }
+    }
 }

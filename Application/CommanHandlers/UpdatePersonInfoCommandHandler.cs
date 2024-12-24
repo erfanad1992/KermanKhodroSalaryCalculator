@@ -1,41 +1,60 @@
 ﻿using Application.Commands;
+using Domain.PersonInfos;
 using MediatR;
 using OvetimePolicies;
 
 namespace Application.CommanHandlers
 {
-    //public class UpdatePersonInfoCommandHandler : IRequestHandler<UpdatePersonInfoCommand, long>
-    //{
-    //    private readonly IPersonInfoRepository _repository;
+    public class UpdatePersonInfoCommandHandler : IRequestHandler<UpdatePersonInfoCommand, long>
+    {
+        private readonly IPersonInfoWriteRepository _repository;
 
-    //    public UpdatePersonInfoCommandHandler(IPersonInfoRepository repository)
-    //    {
-    //        _repository = repository;
-    //    }
-    //    public async Task<long> Handle(UpdatePersonInfoCommand command, CancellationToken cancellationToken)
-    //    {
-    //        var personInfo = await _repository.GetAsync(command.Id);
-    //        if (personInfo == null)
-    //        {
-    //            throw new Exception("اطلاعات مورد نظر یافت نشد");
-    //        }
+        public UpdatePersonInfoCommandHandler(IPersonInfoWriteRepository repository)
+        {
+            _repository = repository;
+        }
+        public async Task<long> Handle(UpdatePersonInfoCommand command, CancellationToken cancellationToken)
+        {
+            var personInfo = await _repository.GetAsync(x=>x.Id == command.Id);
+            if (personInfo == null)
+            {
+                throw new Exception("اطلاعات مورد نظر یافت نشد");
+            }
 
-    //        var salaryAfterTax = OvertimeCalculator.CalculateSalary(command.BasicSalary, command.Allowance, command.Transportation, command.Tax);
+            IOvertimeCalculator overtimeCalculator = GetOvertimeCalculator(command.OvertimePolicy);
 
-    //        personInfo.Update
-    //            (
-    //            command.Name,
-    //            command.Family,
-    //            command.Date,
-    //            command.BasicSalary,
-    //            command.Allowance,
-    //            command.Transportation,
-    //           salaryAfterTax
-    //            );
+            var salaryCalculator = new SalaryCalculator(overtimeCalculator);
+            var salaryAfterTax = salaryCalculator.CalculateSalary(
+                command.BasicSalary,
+                command.Allowance,
+                command.Transportation,
+                command.Tax
+            );
 
-    //        await _repository.SaveEntityChanges();
+            personInfo.Update
+                (
+                command.Name,
+                command.Family,
+                command.Date,
+                command.BasicSalary,
+                command.Allowance,
+                command.Transportation,
+               salaryAfterTax
+                );
 
-    //        return personInfo.Id;
-    //    }
-    //}
+            await _repository.SaveEntityChanges();
+
+            return personInfo.Id;
+        }
+        private IOvertimeCalculator GetOvertimeCalculator(string overtimePolicy)
+        {
+            return overtimePolicy switch
+            {
+                "A" => new OvertimeCalculatorA(),
+                "B" => new OvertimeCalculatorB(),
+                "C" => new OvertimeCalculatorC(),
+                _ => throw new ArgumentException("Invalid Overtime Policy")
+            };
+        }
+    }
 }

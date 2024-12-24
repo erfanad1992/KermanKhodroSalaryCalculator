@@ -37,7 +37,7 @@ namespace KermanKhodro.Infrastructure.EfPersistance.PersonInfos
             return await DbSet.AnyAsync(predicate);
         }
 
-        public async Task Remove(PersonInfo personInfo)
+        public async Task RemoveAsync(PersonInfo personInfo)
         {
             DbSet.Remove(personInfo);
             await SaveEntityChanges();

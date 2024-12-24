@@ -11,5 +11,6 @@ namespace Application.Commands
         public decimal Allowance { get; set; }
         public decimal Transportation { get; set; }
         public decimal Tax { get; set; }
+        public string OvertimePolicy { get; set; }
     }
 }

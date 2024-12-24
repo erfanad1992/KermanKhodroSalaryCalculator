@@ -8,7 +8,7 @@ public interface IPersonInfoWriteRepository
     Task<IList<PersonInfo>> GetListAsync(Expression<Func<PersonInfo, bool>> predicate);
     Task InsertAsync(PersonInfo personInfo);
     Task<bool> IsExistsAsync(Expression<Func<PersonInfo, bool>> predicate);
-    Task Remove(PersonInfo personInfo);
+    Task RemoveAsync(PersonInfo personInfo);
 
     Task SaveEntityChanges();
 
